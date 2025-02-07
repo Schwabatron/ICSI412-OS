@@ -1,4 +1,6 @@
 public class Kernel extends Process  {
+
+    //member of type "scheduler"
     public Kernel() {
     }
 
