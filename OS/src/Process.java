@@ -10,7 +10,7 @@ public abstract class Process implements Runnable{
 
     private boolean quantum_expired; //Indicates if the quantum is expired: for now true for expired false for not expired
     private Semaphore semaphore = new Semaphore(1, true); //Semaphore with 1 permit and no fairness setting for now
-    private Thread thread = new Thread(this);
+    private Thread thread = new Thread(this); //since the current instance implements the runnable class i can use this i think
 
     public Process() {
     }
