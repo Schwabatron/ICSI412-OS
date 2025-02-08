@@ -41,10 +41,10 @@ public abstract class Process implements Runnable{
     public void run() { // This is called by the Thread - NEVER CALL THIS!!!
         try {
             semaphore.acquire();
+            main();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        main();
     } //acquire the semaphore, then call main
 
     public void cooperate() { //if the boolean is true, set the boolean to false and call OS.switchProcess()
