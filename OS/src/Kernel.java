@@ -57,13 +57,13 @@ public class Kernel extends Process  {
                      */
                 }
                 //call start on the next process to run
-                start();
-                try //not sure what all this is just was recommended by the IDE
-                {
-                    stop();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                //start();
+                //try //not sure what all this is just was recommended by the IDE
+                //{
+                //    stop();
+                //} catch (InterruptedException e) {
+                //    throw new RuntimeException(e);
+                //}
 
                 // TODO: Now that we have done the work asked of us, start some process then go to sleep.
             }
