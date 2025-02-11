@@ -11,7 +11,7 @@ public class Scheduler {
     //public reference to the pcb that is currently running
     public PCB current_process;
     //constructor that schedules using the timer the interrupt for every 250ms
-    private Scheduler() {
+    public Scheduler() {
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if(current_process != null) {
@@ -27,11 +27,39 @@ public class Scheduler {
     public int CreateProcess(UserlandProcess up, OS.PriorityType p) //create a PCB fo the userland process
     //it to the list of pcbs and if nothing else is running call switchprocess to get it started
 
+
+
     public void SwitchProcess() //Take the currently running process and put it and the end of the list
     //It then takes the head of the list and runs it
     Corner Cases:
     - nothing is currently running(startup)
     - the user process is done() - we just dont add it to the list
      */
+
+    public int CreateProcess(UserlandProcess up, OS.PriorityType p) {
+        current_process = new PCB(up, p);
+        processes.add(current_process);
+        //Not sure how to check if nothing else is running
+        if(current_process.isDone())
+        {
+            switchProcess();
+        }
+        return current_process.pid;
+    }
+
+    public void switchProcess() {
+        if(current_process != null) { // if something is currently running or the user process is done
+            processes.addLast(processes.remove());
+        }
+        if(!processes.isEmpty())
+        {
+            current_process = processes.getLast();
+            current_process.start();
+        }
+        else
+        {
+            System.out.println("No processes available");
+        }
+    }
 
 }

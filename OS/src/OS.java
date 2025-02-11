@@ -11,6 +11,7 @@ public class OS {
     public static CallType currentCall;
 
     private static void startTheKernel() {
+        ki.start();
     }
 
     public static void switchProcess() {

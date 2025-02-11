@@ -1,9 +1,15 @@
+import java.util.concurrent.Semaphore;
+
 public class Kernel extends Process  {
 
     //member of type "scheduler"
     private Scheduler scheduler;
 
     public Kernel() {
+        this.scheduler = new Scheduler();
+        this.semaphore = new Semaphore(1, true);
+        this.thread = new Thread(this);
+        this.quantum_expired = false;
     }
 
     @Override
@@ -55,25 +61,27 @@ public class Kernel extends Process  {
                     case AllocateMemory ->
                     case FreeMemory ->
                      */
+
                 }
-                //call start on the next process to run
-                //start();
-                //try //not sure what all this is just was recommended by the IDE
-                //{
-                //    stop();
-                //} catch (InterruptedException e) {
-                //    throw new RuntimeException(e);
-                //}
+                scheduler.current_process.start();
+                try
+                {
+                    scheduler.current_process.stop();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
 
                 // TODO: Now that we have done the work asked of us, start some process then go to sleep.
             }
     }
 
-    private void SwitchProcess() {}
+    private void SwitchProcess() {
+        scheduler.switchProcess();
+    }
 
     // For assignment 1, you can ignore the priority. We will use that in assignment 2
     private int CreateProcess(UserlandProcess up, OS.PriorityType priority) {
-        return 0; // change this
+         return scheduler.CreateProcess(up, priority);
     }
 
     private void Sleep(int mills) {
