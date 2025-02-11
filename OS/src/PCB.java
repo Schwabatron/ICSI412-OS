@@ -4,6 +4,7 @@ public class PCB { // Process Control Block
     private OS.PriorityType priority;
 
     PCB(UserlandProcess up, OS.PriorityType priority) {
+        pid = nextPid++;
     }
 
     public String getName() {
@@ -19,6 +20,7 @@ public class PCB { // Process Control Block
 
     public void stop() { /* calls userlandprocess’ stop. Loops with Thread.sleep() until
 ulp.isStopped() is true.  */
+
 
     }
 

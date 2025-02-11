@@ -1,9 +1,25 @@
+import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class Scheduler {
     //member:
     //Private linked list of type PCB
+    private LinkedList<PCB> processes = new LinkedList<>();
     //private instance of timer class
+    private Timer timer = new Timer();
     //public reference to the pcb that is currently running
+    public PCB current_process;
     //constructor that schedules using the timer the interrupt for every 250ms
+    private Scheduler() {
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                if(current_process != null) {
+                    current_process.requestStop();
+                }
+            }
+        }, 0 , 250);
+    }
     //inside interrupt call "request stop" on the currently running PCB
     //If there is one (aka not null)
     //Needs 2 methods:
