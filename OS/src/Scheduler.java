@@ -2,6 +2,8 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
+//no process running means current process = null
 public class Scheduler {
     //member:
     //Private linked list of type PCB
@@ -36,29 +38,31 @@ public class Scheduler {
     - the user process is done() - we just dont add it to the list
      */
 
-    public int CreateProcess(UserlandProcess up, OS.PriorityType p) {
-        current_process = new PCB(up, p);
-        processes.add(current_process);
+    public int CreateProcess(UserlandProcess up, OS.PriorityType p) { //prob here
+        PCB new_process = new PCB(up, p);
+        processes.add(new_process);
         //Not sure how to check if nothing else is running
-        if(current_process.isDone())
+        if(current_process == null)
         {
             switchProcess();
         }
-        return current_process.pid;
+        return new_process.pid;
     }
 
-    public void switchProcess() {
-        if(current_process != null) { // if something is currently running or the user process is done
-            processes.addLast(processes.remove());
+    /*
+    corner cases:
+    - nothing is currently running (startup) dont put null on the list
+    - the user process is done (dont add it to the list)
+     */
+    public void switchProcess() { //prob here
+        if (current_process != null) {
+            if (!current_process.isDone()) {
+                processes.addLast(current_process);
+            }
+            processes.removeFirst();
         }
-        if(!processes.isEmpty())
-        {
-            current_process = processes.getLast();
-            current_process.start();
-        }
-        else
-        {
-            System.out.println("No processes available");
+        if (!processes.isEmpty()) {
+            current_process = processes.getFirst();
         }
     }
 

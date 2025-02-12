@@ -20,12 +20,18 @@ public class PCB { // Process Control Block
     }
 
     public void requestStop() {
-        up.requestStop();
+        this.up.requestStop();
     }
 
     public void stop() throws InterruptedException { /* calls userlandprocess’ stop. Loops with Thread.sleep() until
 ulp.isStopped() is true.  */
         this.up.stop();
+
+        while(!this.up.isStopped())
+        {
+            Thread.sleep(50);
+        }
+
     }
 
     public boolean isDone() { /* calls userlandprocess’ isDone() */

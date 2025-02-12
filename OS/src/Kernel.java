@@ -7,9 +7,10 @@ public class Kernel extends Process  {
 
     public Kernel() {
         this.scheduler = new Scheduler();
-        this.semaphore = new Semaphore(1, true);
-        this.thread = new Thread(this);
-        this.quantum_expired = false;
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
     }
 
     @Override
@@ -41,35 +42,9 @@ public class Kernel extends Process  {
                             OS.retVal = AllocateMemory((int) OS.parameters.get(0));
                     case FreeMemory ->
                         OS.retVal = FreeMemory((int) OS.parameters.get(0), (int) OS.parameters.get(1));
-                    /*
-                    // Priority Schduler
-                    case Sleep -> Sleep((int) OS.parameters.get(0));
-                    case GetPID -> OS.retVal = GetPid();
-                    case Exit -> Exit();
-                    // Devices
-                    case Open ->
-                    case Close ->
-                    case Read ->
-                    case Seek ->
-                    case Write ->
-                    // Messages
-                    case GetPIDByName ->
-                    case SendMessage ->
-                    case WaitForMessage ->
-                    // Memory
-                    case GetMapping ->
-                    case AllocateMemory ->
-                    case FreeMemory ->
-                     */
-
                 }
                 scheduler.current_process.start();
-                try
-                {
-                    scheduler.current_process.stop();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                this.stop();
 
                 // TODO: Now that we have done the work asked of us, start some process then go to sleep.
             }

@@ -4,9 +4,9 @@ public class HelloWorld extends UserlandProcess { //Create main method that make
         while(true)
         {
             try {
+                System.out.println("Hello World!");
                 cooperate();
                 Thread.sleep(50);
-                System.out.println("Hello World!");
             } catch (Exception e) { }
         }
     }

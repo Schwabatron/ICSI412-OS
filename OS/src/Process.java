@@ -16,6 +16,7 @@ public abstract class Process implements Runnable{
         this.semaphore = new Semaphore(1, true);
         this.thread = new Thread(this);
         this.quantum_expired = false;
+        this.thread.start();
     }
 
     public void requestStop() {//sets the boolean indicating that this process’ quantum has expired
@@ -37,8 +38,12 @@ public abstract class Process implements Runnable{
         semaphore.release();
     }
 
-    public void stop() throws InterruptedException { //acquires (decrements) the semaphore, stopping this thread from running
-        semaphore.acquire();
+    public void stop()  { //acquires (decrements) the semaphore, stopping this thread from running
+        try {
+            semaphore.acquire();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void run() { // This is called by the Thread - NEVER CALL THIS!!!
