@@ -55,11 +55,11 @@ public class Scheduler {
     - the user process is done (dont add it to the list)
      */
     public void switchProcess() { //prob here
-        if (current_process != null) {
-            if (!current_process.isDone()) {
-                processes.addLast(current_process);
+        if (current_process != null) { //if current process is not null
+            if (!current_process.isDone()) { // if the current process is NOT done
+                processes.addLast(current_process); //take the current process and move it to the back of the linked list
             }
-            processes.removeFirst();
+            processes.removeFirst();//remove the first element of the linked list (head)
         }
         if (!processes.isEmpty()) {
             current_process = processes.getFirst();
