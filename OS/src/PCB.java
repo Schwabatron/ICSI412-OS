@@ -1,10 +1,14 @@
 public class PCB { // Process Control Block
     private static int nextPid = 1;
+
+    private final UserlandProcess up;
     public int pid;
     private OS.PriorityType priority;
 
     PCB(UserlandProcess up, OS.PriorityType priority) {
-        pid = nextPid++;
+        this.up = up;
+        this.pid = nextPid++;
+        this.priority = priority;
     }
 
     public String getName() {
@@ -16,19 +20,26 @@ public class PCB { // Process Control Block
     }
 
     public void requestStop() {
+        this.up.requestStop();
     }
 
-    public void stop() { /* calls userlandprocess’ stop. Loops with Thread.sleep() until
+    public void stop() throws InterruptedException { /* calls userlandprocess’ stop. Loops with Thread.sleep() until
 ulp.isStopped() is true.  */
+        this.up.stop();
 
+        while(!this.up.isStopped())
+        {
+            Thread.sleep(50);
+        }
 
     }
 
     public boolean isDone() { /* calls userlandprocess’ isDone() */
-        return false; // Change
+        return up.isDone();
     }
 
     void start() { /* calls userlandprocess’ start() */
+        this.up.start();
     }
 
     public void setPriority(OS.PriorityType newPriority) {

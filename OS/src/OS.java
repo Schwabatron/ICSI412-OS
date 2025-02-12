@@ -11,6 +11,22 @@ public class OS {
     public static CallType currentCall;
 
     private static void startTheKernel() {
+        ki.start();
+
+        if(ki.getScheduler().current_process != null) {
+            try {
+                ki.getScheduler().current_process.stop();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        while(OS.retVal == null) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public static void switchProcess() {
@@ -26,7 +42,7 @@ public class OS {
     }
 
     public enum PriorityType {realtime, interactive, background}
-    public static int CreateProcess(UserlandProcess up) {
+    public static int CreateProcess(UserlandProcess up) {//used when no priority is used
         return  CreateProcess(up,PriorityType.interactive);
     }
 

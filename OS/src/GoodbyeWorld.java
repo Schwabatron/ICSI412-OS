@@ -4,9 +4,9 @@ public class GoodbyeWorld extends UserlandProcess{ //Create main method that mak
         while(true)
         {
             try {
+                System.out.println("Goodbye World!");
                 cooperate();
                 Thread.sleep(50);
-                System.out.println("Goodbye World!");
             } catch (Exception e) { }
         }
     }

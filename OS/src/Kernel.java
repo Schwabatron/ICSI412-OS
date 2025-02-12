@@ -1,9 +1,16 @@
+import java.util.concurrent.Semaphore;
+
 public class Kernel extends Process  {
 
     //member of type "scheduler"
     private Scheduler scheduler;
 
     public Kernel() {
+        this.scheduler = new Scheduler();
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
     }
 
     @Override
@@ -35,45 +42,21 @@ public class Kernel extends Process  {
                             OS.retVal = AllocateMemory((int) OS.parameters.get(0));
                     case FreeMemory ->
                         OS.retVal = FreeMemory((int) OS.parameters.get(0), (int) OS.parameters.get(1));
-                    /*
-                    // Priority Schduler
-                    case Sleep -> Sleep((int) OS.parameters.get(0));
-                    case GetPID -> OS.retVal = GetPid();
-                    case Exit -> Exit();
-                    // Devices
-                    case Open ->
-                    case Close ->
-                    case Read ->
-                    case Seek ->
-                    case Write ->
-                    // Messages
-                    case GetPIDByName ->
-                    case SendMessage ->
-                    case WaitForMessage ->
-                    // Memory
-                    case GetMapping ->
-                    case AllocateMemory ->
-                    case FreeMemory ->
-                     */
                 }
-                //call start on the next process to run
-                //start();
-                //try //not sure what all this is just was recommended by the IDE
-                //{
-                //    stop();
-                //} catch (InterruptedException e) {
-                //    throw new RuntimeException(e);
-                //}
+                scheduler.current_process.start();
+                this.stop();
 
                 // TODO: Now that we have done the work asked of us, start some process then go to sleep.
             }
     }
 
-    private void SwitchProcess() {}
+    private void SwitchProcess() {
+        scheduler.switchProcess();
+    }
 
     // For assignment 1, you can ignore the priority. We will use that in assignment 2
     private int CreateProcess(UserlandProcess up, OS.PriorityType priority) {
-        return 0; // change this
+         return scheduler.CreateProcess(up, priority);
     }
 
     private void Sleep(int mills) {
