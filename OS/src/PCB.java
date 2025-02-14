@@ -35,7 +35,7 @@ ulp.isStopped() is true.  */
     }
 
     public boolean isDone() { /* calls userlandprocess’ isDone() */
-        return up.isDone();
+        return this.up.isDone();
     }
 
     void start() { /* calls userlandprocess’ start() */
