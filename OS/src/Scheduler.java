@@ -44,7 +44,6 @@ public class Scheduler {
             if (!current_process.isDone()) { // if the current process is NOT done
                 processes.addLast(current_process); //take the current process and move it to the back of the linked list
             }
-            //processes.removeFirst();//remove the first element of the linked list
         }
         current_process = processes.pollFirst(); //set the current process to the new first element of the list
 

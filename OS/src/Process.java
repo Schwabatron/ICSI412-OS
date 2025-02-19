@@ -8,9 +8,9 @@ public abstract class Process implements Runnable{
     Boolean
      */
 
-    public boolean quantum_expired; //Indicates if the quantum is expired: for now true for expired false for not expired
-    public Semaphore semaphore; //Semaphore with 1 permit and no fairness setting for now
-    public Thread thread; //since the current instance implements the runnable class i can use this i think
+    private boolean quantum_expired; //Indicates if the quantum is expired: for now true for expired false for not expired
+    private Semaphore semaphore; //Semaphore with 1 permit and no fairness setting for now
+    private Thread thread; //since the current instance implements the runnable class i can use this i think
 
     public Process() {
         this.semaphore = new Semaphore(0);
