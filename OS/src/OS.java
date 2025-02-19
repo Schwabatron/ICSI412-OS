@@ -11,11 +11,13 @@ public class OS {
     public static CallType currentCall;
 
     private static void startTheKernel() {
+        PCB current_process = ki.getScheduler().current_process;
         ki.start();
 
-        if(ki.getScheduler().current_process != null) {
+
+        if(current_process != null) {
             try {
-                ki.getScheduler().current_process.stop();
+                current_process.stop();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
