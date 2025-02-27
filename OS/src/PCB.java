@@ -26,22 +26,22 @@ public class PCB { // Process Control Block
     }
 
     public void requestStop() {
-        demote_counter++;
-        if(demote_counter >= 5)
-        {
-            demote_counter = 0;
-            switch(priority)
-            {
-                case OS.PriorityType.realtime -> {
-                    System.out.println("Real time process " + up.getClass().getSimpleName() + " demoted to an interactive process");
-                    setPriority(OS.PriorityType.interactive);
-                }
-                case OS.PriorityType.interactive -> {
-                    System.out.println("interactive process " + up.getClass().getSimpleName() + " demoted to a background process");
-                    setPriority(OS.PriorityType.background);
-                }
-            }
-        }
+        //demote_counter++;
+        //if(demote_counter >= 5)
+        //{
+        //    demote_counter = 0;
+        //    switch(priority)
+        //    {
+        //        case OS.PriorityType.realtime -> {
+        //            System.out.println("Real time process " + up.getClass().getSimpleName() + " demoted to an interactive process");
+        //            setPriority(OS.PriorityType.interactive);
+        //        }
+         //       case OS.PriorityType.interactive -> {
+         //           System.out.println("interactive process " + up.getClass().getSimpleName() + " demoted to a background process");
+         //           setPriority(OS.PriorityType.background);
+          //      }
+          //  }
+       // }
         this.up.requestStop();
     }
 

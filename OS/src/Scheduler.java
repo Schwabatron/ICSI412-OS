@@ -11,7 +11,9 @@ public class Scheduler {
 
 
     private LinkedList<PCB> realtime_processes = new LinkedList<>(); // queue to hold all the processes
+
     private LinkedList<PCB> interactive_processes = new LinkedList<>(); // queue to hold all the processes
+
     private LinkedList<PCB> background_processes = new LinkedList<>(); // queue to hold all the processes
 
     private LinkedList<PCB> sleeping_processes = new LinkedList<>(); //queue to hold all the sleeping processes
@@ -37,14 +39,14 @@ public class Scheduler {
     }
 
     public void Exit() {
-        current_process = null;
-        switchProcess();
+        current_process = null; //making the process null so it doesnt get rescheduled
+        switchProcess(); //switching process
 
     }
 
     public int CreateProcess(UserlandProcess up, OS.PriorityType p) {
         PCB new_process = new PCB(up, p);
-        switch(p)
+        switch(p) //adding to the correct priority queue
         {
             case OS.PriorityType.background -> background_processes.add(new_process);
             case OS.PriorityType.realtime -> realtime_processes.add(new_process);
@@ -72,7 +74,7 @@ public class Scheduler {
 
             wake_up_sleepers();//attempt to wake up sleeping processes
         }
-        current_process = choose_next_process();//set the current process to the new first element of the list
+        current_process = choose_next_process();//finds the next process to run and removes it from the front of the queue
     }
 
 
@@ -81,8 +83,8 @@ public class Scheduler {
 
         ArrayList<PCB> processes_to_be_awoken = new ArrayList<>();
 
-        for (PCB process : sleeping_processes) {
-            if (process.wake_up_time <= clock.millis()) {
+        for (PCB process : sleeping_processes) { //iterate through sleepers
+            if (process.wake_up_time <= clock.millis()) { //if the wake up time is less than the current time then wake them up
                 switch (process.getPriority()) {
                     case OS.PriorityType.background ->{
                         background_processes.add(process);
@@ -103,9 +105,11 @@ public class Scheduler {
 
     private PCB choose_next_process() {
         int random = rand.nextInt(10) + 1; //picks a number 1-10
+        //System.out.println(random);
 
         if (!realtime_processes.isEmpty()) {
-            System.out.println(random + " realtime_processes is not empty");
+            System.out.println(random);
+           // System.out.println(random + " realtime_processes is not empty");
 
             if (random <= 6) { //if the number is 1-6 then we will run a realtime
                 return realtime_processes.pollFirst();
@@ -118,7 +122,7 @@ public class Scheduler {
         } else if (!interactive_processes.isEmpty()) { // if realtime is empty and interactive is not
 
             random = rand.nextInt(4) + 1; //make new range 1-4
-            System.out.println(random + " real time empty");
+           // System.out.println(random + " real time empty");
             if (random <= 3) { //3/4 chance to run interactive
                 return interactive_processes.pollFirst();
             } else {
@@ -126,7 +130,7 @@ public class Scheduler {
             }
 
         } else {
-            System.out.println("other queues empty");
+            //System.out.println("other queues empty");
             return background_processes.pollFirst(); // Only background processes exist
         }
     }
