@@ -64,7 +64,7 @@ public class Scheduler {
 
 
 
-    public void switchProcess() {//prob here
+    public void switchProcess() {
         if (current_process != null && !current_process.isDone()) { //if current process is not null and not done
             switch(current_process.getPriority()) {
                 case OS.PriorityType.background -> background_processes.add(current_process);
