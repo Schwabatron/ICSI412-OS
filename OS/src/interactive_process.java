@@ -5,6 +5,7 @@ public class interactive_process extends UserlandProcess {
         {
             try {
                 System.out.println("interactive World!");
+                OS.Sleep(1000);
                 cooperate();
                 Thread.sleep(50);
             } catch (Exception e) { }

@@ -32,6 +32,7 @@ public class Scheduler {
     }
 
     public void Sleep(int mills) { //Call sleep in the scheduler(doesnt exist yet?)
+        current_process.demote_counter = 0;
         current_process.wake_up_time = clock.millis() + mills; //adding the millis to the clock
         sleeping_processes.add(current_process); //adding to sleeping queue
         current_process = null; //making current null so it doesnt add it back to the queue without waking up
@@ -63,28 +64,27 @@ public class Scheduler {
 
 
 
-    public void switchProcess() { //prob here
+    public void switchProcess() {//prob here
         if (current_process != null && !current_process.isDone()) { //if current process is not null and not done
-
             switch(current_process.getPriority()) {
                 case OS.PriorityType.background -> background_processes.add(current_process);
                 case OS.PriorityType.realtime -> realtime_processes.add(current_process);
                 case OS.PriorityType.interactive -> interactive_processes.add(current_process);
             }
-
-            wake_up_sleepers();//attempt to wake up sleeping processes
         }
+        wake_up_sleepers();//attempt to wake up sleeping processes
         current_process = choose_next_process();//finds the next process to run and removes it from the front of the queue
     }
 
 
     private void wake_up_sleepers() //method used to wake up the sleeping processes
     {
+        long current_time = clock.millis();
 
         ArrayList<PCB> processes_to_be_awoken = new ArrayList<>();
 
         for (PCB process : sleeping_processes) { //iterate through sleepers
-            if (process.wake_up_time <= clock.millis()) { //if the wake up time is less than the current time then wake them up
+            if (process.wake_up_time <= current_time) { //if the wake up time is less than the current time then wake them up
                 switch (process.getPriority()) {
                     case OS.PriorityType.background ->{
                         background_processes.add(process);
@@ -108,7 +108,7 @@ public class Scheduler {
         //System.out.println(random);
 
         if (!realtime_processes.isEmpty()) {
-            System.out.println(random);
+            //System.out.println(random);
            // System.out.println(random + " realtime_processes is not empty");
 
             if (random <= 6) { //if the number is 1-6 then we will run a realtime

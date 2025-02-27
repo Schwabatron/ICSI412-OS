@@ -46,7 +46,6 @@ public class Kernel extends Process  {
                 if (scheduler.current_process != null) {
                     scheduler.current_process.start();
                 }
-                //scheduler.current_process.start();
                 this.stop();
 
                 // TODO: Now that we have done the work asked of us, start some process then go to sleep.
@@ -54,6 +53,25 @@ public class Kernel extends Process  {
     }
 
     private void SwitchProcess() {
+        if(scheduler.current_process != null) {
+            scheduler.current_process.demote_counter++;
+            if(scheduler.current_process.demote_counter >= 5)
+            {
+                switch(scheduler.current_process.getPriority())
+                {
+                    case OS.PriorityType.realtime ->
+                            {
+                                System.out.println("Real-Time process " + scheduler.current_process.getName() + " is now a interactive process");
+                                scheduler.current_process.setPriority(OS.PriorityType.interactive);
+                            }
+                    case OS.PriorityType.interactive ->
+                            {
+                                System.out.println("Interactive process " + scheduler.current_process.getName() + " is now a background process");
+                                scheduler.current_process.setPriority(OS.PriorityType.background);
+                            }
+                }
+            }
+        }
         scheduler.switchProcess();
     }
 
