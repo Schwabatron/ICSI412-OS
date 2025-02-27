@@ -12,8 +12,10 @@ public class OS {
 
     private static void startTheKernel() {
         PCB current_process = ki.getScheduler().current_process;
-        ki.start();
 
+        if(ki != null) {
+            ki.start();
+        }
 
         if(current_process != null) {
             try {
@@ -22,6 +24,7 @@ public class OS {
                 throw new RuntimeException(e);
             }
         }
+
         while(OS.retVal == null) {
             try {
                 Thread.sleep(10);
