@@ -32,17 +32,17 @@ public class Scheduler {
     public void Sleep(int mills) { //Call sleep in the scheduler(doesnt exist yet?)
         current_process.wake_up_time = clock.millis() + mills; //adding the millis to the clock
         sleeping_processes.add(current_process); //adding to sleeping queue
-        current_process.is_sleeping = true;
-        switch(current_process.getPriority())
-        {
-            case OS.PriorityType.realtime -> realtime_processes.remove(current_process);
-            case OS.PriorityType.interactive -> interactive_processes.remove(current_process);
-            case OS.PriorityType.background -> background_processes.remove(current_process);
-        }
+        current_process = null; //making current null so it doesnt add it back to the queue without waking up
         switchProcess(); //switching the process
     }
 
-    public int CreateProcess(UserlandProcess up, OS.PriorityType p) { //prob here
+    public void Exit() {
+        current_process = null;
+        switchProcess();
+
+    }
+
+    public int CreateProcess(UserlandProcess up, OS.PriorityType p) {
         PCB new_process = new PCB(up, p);
         switch(p)
         {
@@ -57,35 +57,19 @@ public class Scheduler {
         }
         return new_process.pid;
     }
-    public void Exit() {
-        switch(current_process.getPriority())
-        {
-            case OS.PriorityType.realtime -> realtime_processes.remove(current_process);
-            case OS.PriorityType.interactive -> interactive_processes.remove(current_process);
-            case OS.PriorityType.background -> background_processes.remove(current_process);
-        }
-        current_process = null;
-        switchProcess();
-
-    }
 
 
-    /*
-    corner cases:
-    - nothing is currently running (startup) dont put null on the list
-    - the user process is done (dont add it to the list)
-     */
+
+
     public void switchProcess() { //prob here
-        if (current_process != null && !current_process.isDone()) { //if current process is not null
+        if (current_process != null && !current_process.isDone()) { //if current process is not null and not done
 
-            if(!current_process.is_sleeping()) //if the current process is not sleeping
-            {
-                switch(current_process.getPriority()) {
-                    case OS.PriorityType.background -> background_processes.add(current_process);
-                    case OS.PriorityType.realtime -> realtime_processes.add(current_process);
-                    case OS.PriorityType.interactive -> interactive_processes.add(current_process);
-                }
+            switch(current_process.getPriority()) {
+                case OS.PriorityType.background -> background_processes.add(current_process);
+                case OS.PriorityType.realtime -> realtime_processes.add(current_process);
+                case OS.PriorityType.interactive -> interactive_processes.add(current_process);
             }
+
             wake_up_sleepers();//attempt to wake up sleeping processes
         }
         current_process = choose_next_process();//set the current process to the new first element of the list
@@ -102,15 +86,12 @@ public class Scheduler {
                 switch (process.getPriority()) {
                     case OS.PriorityType.background ->{
                         background_processes.add(process);
-                        process.is_sleeping = false;
                     }
                     case OS.PriorityType.realtime -> {
                         realtime_processes.add(process);
-                        process.is_sleeping = false;
                     }
                     case OS.PriorityType.interactive -> {
                         interactive_processes.add(process);
-                        process.is_sleeping = false;
                     }
                 }
                 processes_to_be_awoken.add(process);
@@ -124,7 +105,7 @@ public class Scheduler {
         int random = rand.nextInt(10) + 1; //picks a number 1-10
 
         if (!realtime_processes.isEmpty()) {
-            System.out.println(random);
+            System.out.println(random + " realtime_processes is not empty");
 
             if (random <= 6) { //if the number is 1-6 then we will run a realtime
                 return realtime_processes.pollFirst();
@@ -137,6 +118,7 @@ public class Scheduler {
         } else if (!interactive_processes.isEmpty()) { // if realtime is empty and interactive is not
 
             random = rand.nextInt(4) + 1; //make new range 1-4
+            System.out.println(random + " real time empty");
             if (random <= 3) { //3/4 chance to run interactive
                 return interactive_processes.pollFirst();
             } else {
@@ -144,6 +126,7 @@ public class Scheduler {
             }
 
         } else {
+            System.out.println("other queues empty");
             return background_processes.pollFirst(); // Only background processes exist
         }
     }

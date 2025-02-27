@@ -9,7 +9,7 @@ public class PCB { // Process Control Block
 
     public int demote_counter; //counter to keep track of how many times a process has run until the timer stop
 
-    public boolean is_sleeping = false;
+
 
     PCB(UserlandProcess up, OS.PriorityType priority) {
         this.demote_counter = 0;
@@ -17,10 +17,6 @@ public class PCB { // Process Control Block
         this.pid = nextPid++;
         this.priority = priority;
     }
-    public boolean is_sleeping() {
-        return is_sleeping;
-    }
-
     public String getName() {
         return up.getClass().getSimpleName();
     }

@@ -68,11 +68,6 @@ public class Kernel extends Process  {
 
     private void Exit() {
         scheduler.Exit();
-
-        //scheduler.current_process = null; //unschedule the currently running process by setting it to null
-        //making it never run again?
-        //or should stop() be used?
-       // scheduler.switchProcess(); //switching to the next process
     }
 
     private int GetPid() { //return the pid of the currently running process

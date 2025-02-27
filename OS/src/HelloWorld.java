@@ -5,7 +5,7 @@ public class HelloWorld extends UserlandProcess { //Create main method that make
         {
             try {
                 System.out.println("Hello World!");
-                OS.Sleep(200);
+                OS.Sleep(100);
                 cooperate();
                 Thread.sleep(50);
             } catch (Exception e) { }
