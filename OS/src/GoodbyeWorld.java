@@ -5,7 +5,7 @@ public class GoodbyeWorld extends UserlandProcess{ //Create main method that mak
         {
             try {
                 System.out.println("Goodbye World!");
-                OS.Sleep(1000);
+                OS.Sleep(100);
                 cooperate();
                 Thread.sleep(50);
             } catch (Exception e) { }
