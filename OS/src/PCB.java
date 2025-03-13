@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class PCB { // Process Control Block
     private static int nextPid = 1;
 
@@ -9,13 +11,17 @@ public class PCB { // Process Control Block
 
     public int demote_counter; //counter to keep track of how many times a process has run until the timer stop
 
-
+    public int[] VFS_ids = new int[10];
 
     PCB(UserlandProcess up, OS.PriorityType priority) {
         this.demote_counter = 0;
         this.up = up;
         this.pid = nextPid++;
         this.priority = priority;
+
+        for(int i = 0; i < 10; i++) {
+            VFS_ids[i] = -1;
+        }
     }
     public String getName() {
         return up.getClass().getSimpleName();

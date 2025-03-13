@@ -5,6 +5,10 @@ import java.util.*;
 //no process running means current process = null
 public class Scheduler {
 
+    private Kernel ki;
+
+
+
     private Random rand = new Random(); //random, going to be used to decide what to schedule next
 
     private Clock clock = Clock.systemUTC(); // instance of a clock to allow the scheduler to keep track of the time
@@ -21,6 +25,12 @@ public class Scheduler {
     private Timer timer = new Timer();
 
     public PCB current_process;
+
+    public PCB get_current_process() { //accessor
+        return current_process;
+    }
+
+
     public Scheduler() {
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
@@ -40,6 +50,11 @@ public class Scheduler {
     }
 
     public void Exit() {
+        for(int i = 0; i < current_process.VFS_ids.length; i++) {
+            if(current_process.VFS_ids[i] != -1) {
+                ki.Close(i); //closing all of the current processes running devices
+            }
+        }
         current_process = null; //making the process null so it doesnt get rescheduled
         switchProcess(); //switching process
 
@@ -71,6 +86,9 @@ public class Scheduler {
                 case OS.PriorityType.realtime -> realtime_processes.add(current_process);
                 case OS.PriorityType.interactive -> interactive_processes.add(current_process);
             }
+        }
+        else if(current_process != null && current_process.isDone()) {
+            Exit();
         }
         wake_up_sleepers();//attempt to wake up sleeping processes
         current_process = choose_next_process();//finds the next process to run and removes it from the front of the queue
