@@ -16,7 +16,7 @@ public class FakeFileSystem implements Device{
 
         for(int i = 0; i < raf_array.length; i++)
         {
-            if(raf_array[i] != null)
+            if(raf_array[i] == null)
             {
                 try {
                     raf_array[i] = new RandomAccessFile(s, "rw");
@@ -58,6 +58,13 @@ public class FakeFileSystem implements Device{
         try {
            int read_bytes = raf_array[id].read(data);
 
+           if(read_bytes < size && read_bytes != -1)
+           {
+               byte[] temp = new byte[read_bytes];
+               System.arraycopy(data, 0, temp, 0, read_bytes);
+               return temp;
+           }
+
            if(read_bytes == -1 )
            {
                System.out.println("Read returned -1");
@@ -87,7 +94,7 @@ public class FakeFileSystem implements Device{
 
     @Override
     public int Write(int id, byte[] data) {
-        if(id < 0 || id >= raf_array.length || raf_array[id] == null) {
+        if(id >= raf_array.length || raf_array[id] == null) {
             throw new IllegalArgumentException("Not a valid id for write");
         }
 

@@ -10,6 +10,7 @@ public class Kernel extends Process implements Device {
 
     public Kernel() {
         this.scheduler = new Scheduler();
+        this.vfs = new VFS();
     }
 
     public Scheduler getScheduler() {
@@ -20,8 +21,8 @@ public class Kernel extends Process implements Device {
     public void main() {
             while (true) { // Warning on infinite loop is OK...
                 switch (OS.currentCall) { // get a job from OS, do it
-                    case CreateProcess ->  // Note how we get parameters from OS and set the return value
-                            OS.retVal = CreateProcess((UserlandProcess) OS.parameters.get(0), (OS.PriorityType) OS.parameters.get(1));
+                    case CreateProcess ->
+                        OS.retVal = CreateProcess((UserlandProcess) OS.parameters.get(0), (OS.PriorityType) OS.parameters.get(1));
                     case SwitchProcess -> SwitchProcess();
                     case Sleep -> Sleep((int) OS.parameters.get(0));
                     case GetPID ->
@@ -97,6 +98,7 @@ public class Kernel extends Process implements Device {
 
 
     public int Open(String s) {
+
         PCB cur_process = scheduler.get_current_process();
 
         for(int i = 0; i < cur_process.VFS_ids.length; i++) {
@@ -110,12 +112,12 @@ public class Kernel extends Process implements Device {
                else
                {
                    cur_process.VFS_ids[i] = return_value; //putting the vfs id in the kernelland array
-                   return return_value;
+                   return i;
                }
             }
 
         }
-        return -1; //fail
+        return -1; //fail: no space left
     }
 
     public void Close(int id) {

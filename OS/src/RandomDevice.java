@@ -11,15 +11,16 @@ public class RandomDevice implements Device {
         int seed = 0;
         boolean seed_available = false;
 
+
         if(s != null && !s.isEmpty()) { //if the string is not null or empty
-           seed = Integer.parseInt(s); //using the int as the seed for random
+            seed = Integer.parseInt(s); //using the int as the seed for random
             seed_available = true;
         }
 
         //find a place in the array for the random device to go into
         for(int i = 0; i < random_devices.length; i++)
         {
-            if(random_devices[i] != null)
+            if(random_devices[i] == null)
             {
                 random_devices[i] = seed_available ? new Random(seed) : new Random();
                 return i;

@@ -27,6 +27,7 @@ public class VFS implements Device{
             {
                 device_id = device.Open("");
             }
+
         }
         else if(device_and_arg[0].equals("file")) {
             device = new FakeFileSystem();
@@ -48,6 +49,7 @@ public class VFS implements Device{
             }
         }
         return -1;
+
     }
 
     @Override

@@ -83,21 +83,44 @@ public class OS {
 
     // Devices
     public static int Open(String s) {
-        return 0;
+        parameters.clear();
+        parameters.add(s);
+        currentCall = CallType.Open;
+        startTheKernel();
+        return (int) retVal;
     }
 
     public static void Close(int id) {
+        parameters.clear();
+        parameters.add(id);
+        currentCall = CallType.Close;
+        startTheKernel();
     }
 
     public static byte[] Read(int id, int size) {
-        return null;
+        parameters.clear();
+        parameters.add(id);
+        parameters.add(size);
+        currentCall = CallType.Read;
+        startTheKernel();
+        return (byte[]) retVal;
     }
 
     public static void Seek(int id, int to) {
+        parameters.clear();
+        parameters.add(id);
+        parameters.add(to);
+        currentCall = CallType.Seek;
+        startTheKernel();
     }
 
     public static int Write(int id, byte[] data) {
-        return 0;
+        parameters.clear();
+        parameters.add(id);
+        parameters.add(data);
+        currentCall = CallType.Write;
+        startTheKernel();
+        return (int) retVal;
     }
 
     // Messages
