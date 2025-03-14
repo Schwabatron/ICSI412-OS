@@ -1,12 +1,16 @@
+import java.util.concurrent.Delayed;
 import java.util.concurrent.Semaphore;
 
-public class Kernel extends Process  {
+public class Kernel extends Process implements Device {
 
     //member of type "scheduler"
     private Scheduler scheduler;
 
+    private VFS vfs;
+
     public Kernel() {
         this.scheduler = new Scheduler();
+        this.vfs = new VFS();
     }
 
     public Scheduler getScheduler() {
@@ -17,8 +21,8 @@ public class Kernel extends Process  {
     public void main() {
             while (true) { // Warning on infinite loop is OK...
                 switch (OS.currentCall) { // get a job from OS, do it
-                    case CreateProcess ->  // Note how we get parameters from OS and set the return value
-                            OS.retVal = CreateProcess((UserlandProcess) OS.parameters.get(0), (OS.PriorityType) OS.parameters.get(1));
+                    case CreateProcess ->
+                        OS.retVal = CreateProcess((UserlandProcess) OS.parameters.get(0), (OS.PriorityType) OS.parameters.get(1));
                     case SwitchProcess -> SwitchProcess();
                     case Sleep -> Sleep((int) OS.parameters.get(0));
                     case GetPID ->
@@ -92,22 +96,49 @@ public class Kernel extends Process  {
        return scheduler.current_process.pid; //return current pid
     }
 
-    private int Open(String s) {
-        return 0; // change this
+
+    public int Open(String s) {
+
+        PCB cur_process = scheduler.get_current_process();
+
+        for(int i = 0; i < cur_process.VFS_ids.length; i++) {
+            if(cur_process.VFS_ids[i] == -1)
+            {
+               int return_value = vfs.Open(s);
+               if(return_value == -1)
+               {
+                   return -1;//fail
+               }
+               else
+               {
+                   cur_process.VFS_ids[i] = return_value; //putting the vfs id in the kernelland array
+                   return i;
+               }
+            }
+
+        }
+        return -1; //fail: no space left
     }
 
-    private void Close(int id) {
+    public void Close(int id) {
+        int vfs_id = scheduler.get_current_process().VFS_ids[id]; //retrieving the vfs id
+        vfs.Close(vfs_id); //using the vfs id to close the correct device
+        scheduler.get_current_process().VFS_ids[id] = -1; //setting back to -1
     }
 
-    private byte[] Read(int id, int size) {
-        return null; // change this
+    public byte[] Read(int id, int size) {
+        int vfs_id = scheduler.get_current_process().VFS_ids[id]; //retrieving the vfs id
+        return vfs.Read(vfs_id, size);
     }
 
-    private void Seek(int id, int to) {
+    public void Seek(int id, int to) {
+        int vfs_id = scheduler.get_current_process().VFS_ids[id]; //retrieving the vfs id
+        vfs.Seek(vfs_id, to);
     }
 
-    private int Write(int id, byte[] data) {
-        return 0; // change this
+    public int Write(int id, byte[] data) {
+        int vfs_id = scheduler.get_current_process().VFS_ids[id];
+        return vfs.Write(vfs_id, data); // change this
     }
 
     private void SendMessage(/*KernelMessage km*/) {
