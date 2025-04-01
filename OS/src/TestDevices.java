@@ -8,7 +8,7 @@ public class TestDevices extends UserlandProcess {
             throw new RuntimeException(e);
         }
         int random_dev = OS.Open("random 100");
-        int file_dev = OS.Open("file test.txt");
+        int file_dev = OS.Open("file OS/src/test.txt");
 
         if(random_dev == -1) {
             System.out.println("Random device not found/failed to open");
@@ -17,7 +17,7 @@ public class TestDevices extends UserlandProcess {
         }else{
 
 
-            byte[] test_data = "test data".getBytes();
+            byte[] test_data = "hello world".getBytes();
 
             OS.Write(random_dev, test_data);
             OS.Write(file_dev, test_data);
