@@ -38,7 +38,7 @@ public class Kernel extends Process implements Device {
                         OS.retVal = Write((int) OS.parameters.get(0), (byte[]) OS.parameters.get(1));
                     case GetPIDByName ->
                         OS.retVal = GetPidByName((String) OS.parameters.get(0));
-                    case SendMessage -> SendMessage();
+                    case SendMessage -> SendMessage((KernelMessage) OS.parameters.get(0));
                     case WaitForMessage ->
                             OS.retVal = WaitForMessage();
                     case GetMapping -> GetMapping((int) OS.parameters.get(0));
@@ -141,15 +141,21 @@ public class Kernel extends Process implements Device {
         return vfs.Write(vfs_id, data); // change this
     }
 
-    private void SendMessage(/*KernelMessage km*/) {
+    private void SendMessage(KernelMessage km) {
+        KernelMessage message = new KernelMessage(km); //copy of the kernel message
+        message.sender_PID = scheduler.current_process.pid;
+        scheduler.SendMessage(message); //using the copy this way the process and the kernel dont access the same object
+
     }
 
     private KernelMessage WaitForMessage() {
-        return null;
+        KernelMessage message = scheduler.WaitForMessage();
+        return message;
     }
 
     private int GetPidByName(String name) {
-        return 0; // change this
+        int pid = scheduler.GetPidByName(name);
+        return pid;
     }
 
     private void GetMapping(int virtualPage) {

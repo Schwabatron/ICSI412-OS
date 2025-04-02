@@ -22,6 +22,12 @@ public class Scheduler {
 
     private LinkedList<PCB> sleeping_processes = new LinkedList<>(); //queue to hold all the sleeping processes
 
+    private LinkedList<PCB> waiting_processes = new LinkedList<>(); //keeping track of processes waiting for messages
+
+
+
+
+
     private Timer timer = new Timer();
 
     public PCB current_process;
@@ -149,8 +155,74 @@ public class Scheduler {
             }
 
         } else {
-            //System.out.println("other queues empty");
-            return background_processes.pollFirst(); // Only background processes exist
+            var process = background_processes.pollFirst();
+            System.out.println("next process chosen -> " + process.getName());
+            return process; // Only background processes exist
         }
+    }
+
+    public int GetPidByName(String name) {
+        List<LinkedList<PCB>> allQueues = Arrays.asList(
+                realtime_processes,
+                interactive_processes,
+                background_processes,
+                sleeping_processes,
+                waiting_processes
+        );
+
+        for(var queue : allQueues) {
+            for(PCB process : queue) {
+                if(process.getName().equals(name)) {
+
+                    return process.pid; //return the process with the matching name
+                }
+            }
+        }
+
+        return -1; //fail
+    }
+
+    public void SendMessage(KernelMessage km) {
+        List<LinkedList<PCB>> allQueues = Arrays.asList(
+                realtime_processes,
+                interactive_processes,
+                background_processes,
+                sleeping_processes,
+                waiting_processes
+        );
+
+        for(var queue : allQueues) {
+            for(PCB process : queue) {
+                if(km.receiver_PID == process.pid) { //if we find the process that we would like to send the message to
+                    //System.out.println("kernel message added to queue for process: " + process.getName());
+                    process.message_Queue.add(km); //add the message to the message queue
+                    if(waiting_processes.contains(process)) { //checking if this process was waiting on a message
+                        waiting_processes.remove(process); //remove from the waiting process queue
+                        //System.out.println("process removed from the waiting queue: " + process.getName());
+                        switch(process.getPriority()) //add it back to its correct priority queue
+                        {
+                            case OS.PriorityType.background -> background_processes.add(process);
+                            case OS.PriorityType.realtime -> realtime_processes.add(process);
+                            case OS.PriorityType.interactive -> interactive_processes.add(process);
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    public KernelMessage WaitForMessage() {
+        if(!current_process.message_Queue.isEmpty()) {
+            return current_process.message_Queue.pollFirst();
+        }
+        else {
+            waiting_processes.add(current_process);
+            current_process = null;
+            switchProcess();
+        }
+
+        return null; //not sure what to return
     }
 }
