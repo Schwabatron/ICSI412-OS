@@ -141,7 +141,7 @@ public class Scheduler {
 
         } else {
             var process = background_processes.pollFirst();
-            System.out.println("next process chosen -> " + process.getName());
+            //System.out.println("next process chosen -> " + process.getName());
             return process; // Only background processes exist
         }
     }
