@@ -99,6 +99,10 @@ public class Scheduler {
         }
         wake_up_sleepers();//attempt to wake up sleeping processes
         current_process = choose_next_process();//finds the next process to run and removes it from the front of the queue
+        if(current_process != null && current_process.woken_up) {
+            OS.retVal = current_process.message_Queue.pollFirst();
+            current_process.woken_up = false;
+        }
     }
 
 
@@ -198,6 +202,7 @@ public class Scheduler {
                     process.message_Queue.add(km); //add the message to the message queue
                     if(waiting_processes.contains(process)) { //checking if this process was waiting on a message
                         waiting_processes.remove(process); //remove from the waiting process queue
+                        process.woken_up = true;
                         //System.out.println("process removed from the waiting queue: " + process.getName());
                         switch(process.getPriority()) //add it back to its correct priority queue
                         {

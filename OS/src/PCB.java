@@ -18,6 +18,8 @@ public class PCB { // Process Control Block
 
      private String name;
 
+     public boolean woken_up = false; //falg to
+
     PCB(UserlandProcess up, OS.PriorityType priority) {
         this.demote_counter = 0;
         this.up = up;

@@ -12,6 +12,7 @@ public class OS {
 
     private static void startTheKernel() {
         PCB current_process = ki.getScheduler().current_process;
+        int i = 0;
 
         if(ki != null) {
             ki.start();
@@ -25,8 +26,13 @@ public class OS {
             }
         }
 
-        while(OS.retVal == null) {
+        while(OS.retVal == null && OS.currentCall == CallType.CreateProcess) {
             try {
+                i++;
+                if(i>100)
+                {
+                    System.out.println("stuck in sleep loop in OS ");
+                }
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
