@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.LinkedList;
 
 public class PCB { // Process Control Block
     private static int nextPid = 1;
@@ -13,18 +14,25 @@ public class PCB { // Process Control Block
 
     public int[] VFS_ids = new int[10];
 
+    public LinkedList<KernelMessage> message_Queue = new LinkedList<>();
+
+     private String name;
+
+     public boolean woken_up = false; //falg to
+
     PCB(UserlandProcess up, OS.PriorityType priority) {
         this.demote_counter = 0;
         this.up = up;
         this.pid = nextPid++;
         this.priority = priority;
+        this.name = up.getClass().getSimpleName();
 
         for(int i = 0; i < 10; i++) {
             VFS_ids[i] = -1;
         }
     }
     public String getName() {
-        return up.getClass().getSimpleName();
+        return name;
     }
 
     OS.PriorityType getPriority() {

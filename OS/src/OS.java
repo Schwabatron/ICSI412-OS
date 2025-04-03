@@ -12,6 +12,7 @@ public class OS {
 
     private static void startTheKernel() {
         PCB current_process = ki.getScheduler().current_process;
+        int i = 0;
 
         if(ki != null) {
             ki.start();
@@ -25,8 +26,13 @@ public class OS {
             }
         }
 
-        while(OS.retVal == null) {
+        while(OS.retVal == null && OS.currentCall == CallType.CreateProcess) {
             try {
+                i++;
+                if(i>100)
+                {
+                    System.out.println("stuck in sleep loop in OS ");
+                }
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -125,14 +131,25 @@ public class OS {
 
     // Messages
     public static void SendMessage(KernelMessage km) {
+        parameters.clear();
+        parameters.add(km);
+        currentCall = CallType.SendMessage;
+        startTheKernel();
     }
 
     public static KernelMessage WaitForMessage() {
-        return null;
+        parameters.clear();
+        currentCall = CallType.WaitForMessage;
+        startTheKernel();
+        return (KernelMessage) retVal;
     }
 
-    public static int GetPidByName(String name) {
-        return 0; // Change this
+    public static int GetPidByName(String name) { //Get pid by name
+        parameters.clear();
+        parameters.add(name);
+        currentCall = CallType.GetPIDByName;
+        startTheKernel();
+        return (int) retVal;
     }
 
     // Memory
