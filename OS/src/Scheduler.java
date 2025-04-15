@@ -61,6 +61,10 @@ public class Scheduler {
                 ki.Close(i); //closing all of the current processes running devices
             }
         }
+        for(var message : current_process.message_Queue) { //clearing out the message queue
+            current_process.message_Queue.remove(message);
+        }
+
         current_process = null; //making the process null so it doesnt get rescheduled
         switchProcess(); //switching process
 
