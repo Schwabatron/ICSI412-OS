@@ -159,6 +159,17 @@ public class Kernel extends Process implements Device {
     }
 
     private void GetMapping(int virtualPage) {
+        int page_num = scheduler.get_current_process().page_table[virtualPage];
+
+        if(page_num == -1)
+        {
+            System.out.println("Page " + virtualPage + " not found: Seg fault"); //throw error message
+            OS.Exit(); //kill the current process
+        }
+
+        int slot = (int)(Math.random() * 2); //choosing a random slot (1 or 0)
+        Hardware.TLB[slot][0] = virtualPage;
+        Hardware.TLB[slot][1] = page_num;
     }
 
     private int AllocateMemory(int size) {

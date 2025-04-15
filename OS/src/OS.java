@@ -154,13 +154,26 @@ public class OS {
 
     // Memory
     public static void GetMapping(int virtualPage) {
+        parameters.clear();
+        parameters.add(virtualPage);
+        currentCall = CallType.GetMapping;
+        startTheKernel();
     }
 
     public static int AllocateMemory(int size ) {
-        return 0; // Change this
+        parameters.clear();
+        parameters.add(size);
+        currentCall = CallType.AllocateMemory;
+        startTheKernel();
+        return (int) retVal;
     }
 
     public static boolean FreeMemory(int pointer, int size) {
-        return false; // Change this
+        parameters.clear();
+        parameters.add(pointer);
+        parameters.add(size);
+        currentCall = CallType.FreeMemory;
+        startTheKernel();
+        return (boolean) retVal;
     }
 }
