@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.Semaphore;
 
@@ -8,9 +9,12 @@ public class Kernel extends Process implements Device {
 
     private VFS vfs;
 
+    private boolean[] page_used = new boolean[1024];
+
     public Kernel() {
         this.scheduler = new Scheduler();
         this.vfs = new VFS();
+        Arrays.fill(page_used, false); //initializing the page_used array
     }
 
     public Scheduler getScheduler() {
@@ -173,7 +177,19 @@ public class Kernel extends Process implements Device {
     }
 
     private int AllocateMemory(int size) {
-        return 0; // change this
+
+        int num_pages = size / 1024;
+        int pages_found = 0;
+        int starting_index = -1;
+
+        for(int i = 0; i < scheduler.current_process.page_table.length; i++) {
+            if(scheduler.current_process.page_table[i] == -1)
+            {
+                starting_index = i;
+            }
+        }
+
+        return starting_index;
     }
 
     private boolean FreeMemory(int pointer, int size) {

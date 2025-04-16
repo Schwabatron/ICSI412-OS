@@ -20,7 +20,7 @@ public class PCB { // Process Control Block
 
      public boolean woken_up = false; //flag to keep track if this process has been woken up (message queue bad name)
 
-    public int page_table[] = new int[100];
+    public int[] page_table = new int[100];
 
     PCB(UserlandProcess up, OS.PriorityType priority) {
         this.demote_counter = 0;

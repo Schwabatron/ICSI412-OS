@@ -160,7 +160,12 @@ public class OS {
         startTheKernel();
     }
 
-    public static int AllocateMemory(int size ) {
+    public static int AllocateMemory(int size) {
+        if(size % 1024 != 0) //if the size is not a multiple of 1024
+        {
+            System.out.println("Allocate Memory Error");
+            return -1; //return error -1
+        }
         parameters.clear();
         parameters.add(size);
         currentCall = CallType.AllocateMemory;
@@ -169,6 +174,11 @@ public class OS {
     }
 
     public static boolean FreeMemory(int pointer, int size) {
+        if(size % 1024 != 0 || pointer % 1024 != 0) //making sure both pointer and size are both multiples of 1024
+        {
+            System.out.println("Free Memory Error");
+            return false; //return false for maybe a fail
+        }
         parameters.clear();
         parameters.add(pointer);
         parameters.add(size);
