@@ -197,6 +197,7 @@ public class Kernel extends Process implements Device {
             }
         }
         int temp_starting_index = starting_index;
+        int pages_cleared = 0;
 
         for(int i = 0; i < page_used.length; i++) {
             if(!page_used[i])
@@ -204,15 +205,15 @@ public class Kernel extends Process implements Device {
                 page_used[i] = true;
                 scheduler.current_process.page_table[temp_starting_index] = i;
                 temp_starting_index++;
-                num_pages--;
-                if(num_pages == 0)
+                pages_cleared++;
+                if(pages_cleared == num_pages)
                 {
                     break;
                 }
             }
         }
 
-        if(num_pages != 0)
+        if(pages_cleared != num_pages)
         {
             System.out.println("Could not find sufficient space in memory: Kernel");
 
