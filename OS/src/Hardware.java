@@ -9,35 +9,53 @@ public class Hardware {
 
     //Methods to simulate Load and Store instructions as seen in assembly
     public static byte Read(int address) {
-        while(true) {
-            int page_num = address/PAGE_SIZE; //get the page number
-            for(int i = 0; i < TLB.length; i++) {
+        int page_num = address/PAGE_SIZE; //get the page number
+        int physical_address = getPhysicalAddress(address, page_num);
+
+        if (physical_address != -1)
+            return memory[physical_address];
+
+        OS.GetMapping(page_num);
+        physical_address = getPhysicalAddress(address, page_num);
+
+        if (physical_address != -1)
+            return memory[physical_address];
+
+        OS.Exit();
+        return 0;
+    }
+
+    private static int getPhysicalAddress(int address, int page_num) {
+        int physical_address = -1;
+        for(int i = 0; i < TLB.length; i++) {
                 if(TLB[i][0] == page_num) {
                     int mapping = TLB[i][1];
                     int offset = address % PAGE_SIZE;
-                    int physical_address = mapping * PAGE_SIZE + offset; //getting the physical address
-                    return memory[physical_address];
+
+                    physical_address = mapping * PAGE_SIZE + offset; //getting the physical address
                 }
             }
-            OS.GetMapping(page_num);
-        }
+        return physical_address;
     }
 
     public static void Write(int address, byte value) {
-
-        while(true) {
             int page_num = address/PAGE_SIZE; //get the page number
-            for(int i = 0; i < TLB.length; i++) {
-                if(TLB[i][0] == page_num) {
-                    int mapping = TLB[i][1];
-                    int offset = address % PAGE_SIZE;
-                    int physical_address = mapping * PAGE_SIZE + offset; //getting the physical address
-                    memory[physical_address] = value;
-                    return;
-                }
+            int physical_address = getPhysicalAddress(address, page_num);
+            if (physical_address != -1)
+            {
+                memory[physical_address] = value;
+                return;
             }
             OS.GetMapping(page_num);
-        }
+            physical_address = getPhysicalAddress(address, page_num);
+            if(physical_address != -1)
+            {
+                memory[physical_address] = value;
+                return;
+            }
+
+            OS.Exit();
+        
     }
 
     public static void ClearTLB()

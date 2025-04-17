@@ -168,7 +168,7 @@ public class Kernel extends Process implements Device {
         if(page_num == -1)
         {
             System.out.println("Page " + virtualPage + " not found: Seg fault"); //throw error message
-            OS.Exit(); //kill the current process
+            Exit(); //kill the current process
         }
 
         int slot = (int)(Math.random() * 2); //choosing a random slot (1 or 0)
@@ -199,7 +199,7 @@ public class Kernel extends Process implements Device {
         int temp_starting_index = starting_index;
 
         for(int i = 0; i < page_used.length; i++) {
-            if(page_used[i] == false)
+            if(!page_used[i])
             {
                 page_used[i] = true;
                 scheduler.current_process.page_table[temp_starting_index] = i;
@@ -229,6 +229,7 @@ public class Kernel extends Process implements Device {
     }
 
     private boolean FreeMemory(int pointer, int size) {
+        Hardware.ClearTLB();
         int num_pages = size / 1024; //getting the number of pages that need to be freed
 
         if(pointer < 0 || pointer + num_pages > scheduler.current_process.page_table.length)
