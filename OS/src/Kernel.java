@@ -185,7 +185,7 @@ public class Kernel extends Process implements Device {
             boolean found = true;
 
             for (int j = 0; j < num_pages; j++) {
-                if (scheduler.current_process.page_table[i + j] != -1) {
+                if (scheduler.current_process.page_table[i + j] != -1) { //finding contiguous memory in the page table
                     found = false;
                     break;
                 }
