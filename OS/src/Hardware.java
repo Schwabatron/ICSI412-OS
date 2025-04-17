@@ -40,5 +40,14 @@ public class Hardware {
         }
     }
 
+    public static void ClearTLB()
+    {
+        for (int i = 0; i < TLB.length; i++) {
+            TLB[i][0] = -1; // Invalidate VPN
+            TLB[i][1] = -1; // Invalidate PPN
+        }
+    }
+
+
 
 }

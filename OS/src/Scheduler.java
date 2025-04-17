@@ -65,6 +65,13 @@ public class Scheduler {
             current_process.message_Queue.remove(message);
         }
 
+        for(int i = 0; i < current_process.page_table.length; i++) { //closing all the memory upon exit
+            if(current_process.page_table[i] != -1) {
+                ki.page_used[current_process.page_table[i]] = false;
+                current_process.page_table[i] = -1;
+            }
+        }
+
         current_process = null; //making the process null so it doesnt get rescheduled
         switchProcess(); //switching process
 
@@ -86,6 +93,7 @@ public class Scheduler {
 
 
     public void switchProcess() {
+        Hardware.ClearTLB(); //clearing the TLB on process switch
         if (current_process != null && !current_process.isDone()) { //if current process is not null and not done
             add_to_queue(current_process);
         }
