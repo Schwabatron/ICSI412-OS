@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.Semaphore;
 
@@ -8,9 +9,12 @@ public class Kernel extends Process implements Device {
 
     private VFS vfs;
 
+    public boolean[] page_used = new boolean[1024];
+
     public Kernel() {
         this.scheduler = new Scheduler();
         this.vfs = new VFS();
+        Arrays.fill(page_used, false); //initializing the page_used array
     }
 
     public Scheduler getScheduler() {
@@ -159,13 +163,93 @@ public class Kernel extends Process implements Device {
     }
 
     private void GetMapping(int virtualPage) {
+        int page_num = scheduler.get_current_process().page_table[virtualPage];
+
+        if(page_num == -1)
+        {
+            System.out.println("Page " + virtualPage + " not found: Seg fault"); //throw error message
+            Exit(); //kill the current process
+        }
+
+        int slot = (int)(Math.random() * 2); //choosing a random slot (1 or 0)
+        Hardware.TLB[slot][0] = virtualPage;
+        Hardware.TLB[slot][1] = page_num;
     }
 
     private int AllocateMemory(int size) {
-        return 0; // change this
+
+        int num_pages = size / 1024; // amount of space needed in pages
+        int starting_index = -1;
+
+        for (int i = 0; i <= scheduler.current_process.page_table.length - num_pages; i++) {
+            boolean found = true;
+
+            for (int j = 0; j < num_pages; j++) {
+                if (scheduler.current_process.page_table[i + j] != -1) {
+                    found = false;
+                    break;
+                }
+            }
+
+            if (found) {
+                starting_index = i;
+                break;
+            }
+        }
+        int temp_starting_index = starting_index;
+        int pages_cleared = 0;
+
+        for(int i = 0; i < page_used.length; i++) {
+            if(!page_used[i])
+            {
+                page_used[i] = true;
+                scheduler.current_process.page_table[temp_starting_index] = i;
+                temp_starting_index++;
+                pages_cleared++;
+                if(pages_cleared == num_pages)
+                {
+                    break;
+                }
+            }
+        }
+
+        if(pages_cleared != num_pages)
+        {
+            System.out.println("Could not find sufficient space in memory: Kernel");
+
+            for (int i = starting_index; i < temp_starting_index; i++) { //opon a fail i need to reset all the memory that was going to be allocated
+                int page_index = scheduler.current_process.page_table[i];
+                page_used[page_index] = false;
+                scheduler.current_process.page_table[i] = -1;
+            }
+
+            return -1;
+        }
+
+        return starting_index;
     }
 
     private boolean FreeMemory(int pointer, int size) {
+        Hardware.ClearTLB();
+        int num_pages = size / 1024; //getting the number of pages that need to be freed
+
+        if(pointer < 0 || pointer + num_pages > scheduler.current_process.page_table.length)
+        {
+            return false; //if the pointer is negative, is asking you to free more memory than you have or is pointing ahead of the space you have then this did not work
+        }
+
+        for(int i = pointer; i < pointer + num_pages; i++) {
+            int page_index = scheduler.current_process.page_table[i];
+
+            if(page_index == -1)
+            {
+                return false; //memory is already free
+            }
+
+            page_used[page_index] = false;
+            scheduler.current_process.page_table[i] = -1;
+        }
+
         return true;
     }
 
