@@ -31,7 +31,6 @@ public class Hardware {
                 if(TLB[i][0] == page_num) {
                     int mapping = TLB[i][1];
                     int offset = address % PAGE_SIZE;
-
                     physical_address = mapping * PAGE_SIZE + offset; //getting the physical address
                 }
             }

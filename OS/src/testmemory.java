@@ -33,6 +33,16 @@ public class testmemory extends UserlandProcess{
             System.out.println("Memory not free successfully");
         }
 
+        int test2 = OS.AllocateMemory(2048);
+
+        if(test2 == -1) {
+            System.out.println("Memory allocation failed");
+        }
+        else
+        {
+            System.out.println("Memory allocated: " + test2);
+        }
+
         for(int i = 0; i < 10; i++) {
             byte temp = Hardware.Read(i + pointer);
             System.out.println(temp);
