@@ -163,6 +163,7 @@ public class Kernel extends Process implements Device {
     }
 
     private void GetMapping(int virtualPage) {
+        /*
         int page_num = scheduler.get_current_process().page_table[virtualPage];
 
         if(page_num == -1)
@@ -174,9 +175,12 @@ public class Kernel extends Process implements Device {
         int slot = (int)(Math.random() * 2); //choosing a random slot (1 or 0)
         Hardware.TLB[slot][0] = virtualPage;
         Hardware.TLB[slot][1] = page_num;
+
+         */
     }
 
     private int AllocateMemory(int size) {
+
 
         int num_pages = size / 1024; // amount of space needed in pages
         int starting_index = -1;
@@ -185,7 +189,7 @@ public class Kernel extends Process implements Device {
             boolean found = true;
 
             for (int j = 0; j < num_pages; j++) {
-                if (scheduler.current_process.page_table[i + j] != -1) { //finding contiguous memory in the page table
+                if (scheduler.current_process.page_table[i + j] != null) { //finding contiguous memory in the page table
                     found = false;
                     break;
                 }
@@ -203,7 +207,7 @@ public class Kernel extends Process implements Device {
             if(!page_used[i])
             {
                 page_used[i] = true;
-                scheduler.current_process.page_table[temp_starting_index] = i;
+                scheduler.current_process.page_table[temp_starting_index] = new VirtualToPhysicalMapping();
                 temp_starting_index++;
                 pages_cleared++;
                 if(pages_cleared == num_pages)
@@ -218,9 +222,9 @@ public class Kernel extends Process implements Device {
             System.out.println("Could not find sufficient space in memory: Kernel");
 
             for (int i = starting_index; i < temp_starting_index; i++) { //opon a fail i need to reset all the memory that was going to be allocated
-                int page_index = scheduler.current_process.page_table[i];
+                int page_index = scheduler.current_process.page_table[i].physical_page_number;
                 page_used[page_index] = false;
-                scheduler.current_process.page_table[i] = -1;
+                scheduler.current_process.page_table[i] = null;
             }
 
             return -1;
@@ -230,6 +234,7 @@ public class Kernel extends Process implements Device {
     }
 
     private boolean FreeMemory(int pointer, int size) {
+
         Hardware.ClearTLB();
         int num_pages = size / 1024; //getting the number of pages that need to be freed
 
@@ -239,7 +244,7 @@ public class Kernel extends Process implements Device {
         }
 
         for(int i = pointer; i < pointer + num_pages; i++) {
-            int page_index = scheduler.current_process.page_table[i];
+            int page_index = scheduler.current_process.page_table[i].physical_page_number;
 
             if(page_index == -1)
             {
@@ -247,7 +252,7 @@ public class Kernel extends Process implements Device {
             }
 
             page_used[page_index] = false;
-            scheduler.current_process.page_table[i] = -1;
+            scheduler.current_process.page_table[i] = null;
         }
 
         return true;
@@ -255,5 +260,7 @@ public class Kernel extends Process implements Device {
 
     private void FreeAllMemory(PCB currentlyRunning) {
     }
+
+
 
 }

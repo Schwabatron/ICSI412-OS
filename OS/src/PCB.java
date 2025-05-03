@@ -20,7 +20,7 @@ public class PCB { // Process Control Block
 
      public boolean woken_up = false; //flag to keep track if this process has been woken up (message queue bad name)
 
-    public int[] page_table = new int[100];
+    public VirtualToPhysicalMapping[] page_table = new VirtualToPhysicalMapping[100];
 
     PCB(UserlandProcess up, OS.PriorityType priority) {
         this.demote_counter = 0;
@@ -31,9 +31,6 @@ public class PCB { // Process Control Block
 
         for(int i = 0; i < 10; i++) {
             VFS_ids[i] = -1;
-        }
-        for(int i = 0; i < page_table.length; i++) { //initializing the page table to all -1
-            page_table[i] = -1;
         }
     }
     public String getName() {
