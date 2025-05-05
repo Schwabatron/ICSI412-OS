@@ -67,4 +67,5 @@ ulp.isStopped() is true.  */
     public void setPriority(OS.PriorityType newPriority) {
         priority = newPriority;
     }
+
 }

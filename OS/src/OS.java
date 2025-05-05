@@ -47,9 +47,11 @@ public class OS {
     }
 
     public static void Startup(UserlandProcess init) {
-            ki = new Kernel();
-            CreateProcess(init, PriorityType.interactive);
-            CreateProcess(new IdleProcess(), PriorityType.background);
+        ki = new Kernel();
+        //open a new swap file
+        Open("File pageFile.txt");
+        CreateProcess(init, PriorityType.interactive);
+        CreateProcess(new IdleProcess(), PriorityType.background);
     }
 
     public enum PriorityType {realtime, interactive, background}

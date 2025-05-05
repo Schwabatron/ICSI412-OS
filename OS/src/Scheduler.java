@@ -66,9 +66,9 @@ public class Scheduler {
         }
 
         for(int i = 0; i < current_process.page_table.length; i++) { //closing all the memory upon exit
-            if(current_process.page_table[i] != -1) {
-                ki.page_used[current_process.page_table[i]] = false;
-                current_process.page_table[i] = -1;
+            if(current_process.page_table[i] != null) {
+                ki.page_used[current_process.page_table[i].physical_page_number] = false;
+                current_process.page_table[i] = null;
             }
         }
 
@@ -228,4 +228,85 @@ public class Scheduler {
             case OS.PriorityType.interactive -> interactive_processes.add(process);
         }
     }
+
+    public PCB getRandomProcess(){
+        Boolean found = false;
+        //get a random process
+        Random rand = new Random();
+
+        while(!found) {
+            int index = rand.nextInt(6) + 1;
+
+            switch (index) {
+                case 1 -> {
+                    int random = rand.nextInt(realtime_processes.size());
+                    PCB process = realtime_processes.get(random);
+                    for(int i = 0; i < process.page_table.length; i++) {
+                        if(process.page_table[i].physical_page_number != -1)
+                        {
+                            current_process.page_table[i].physical_page_number = process.page_table[i].physical_page_number;
+                            process.page_table[i].physical_page_number = -1; //setting back to -1
+                            return process; //found a process with some space
+                        }
+                    }
+                }
+                case 2 -> {
+                    int random = rand.nextInt(interactive_processes.size());
+                    PCB process = interactive_processes.get(random);
+                    for(int i = 0; i < process.page_table.length; i++) {
+                        if(process.page_table[i].physical_page_number != -1)
+                        {
+                            current_process.page_table[i].physical_page_number = process.page_table[i].physical_page_number;
+                            process.page_table[i].physical_page_number = -1; //setting back to -1
+                            return process; //found a process with some space
+                        }
+                    }
+                }
+                case 3 -> {
+                    int random = rand.nextInt(background_processes.size());
+                    PCB process = background_processes.get(random);
+                    for(int i = 0; i < process.page_table.length; i++) {
+                        if(process.page_table[i].physical_page_number != -1)
+                        {
+                            current_process.page_table[i].physical_page_number = process.page_table[i].physical_page_number;
+                            process.page_table[i].physical_page_number = -1; //setting back to -1
+                            return process; //found a process with some space
+                        }
+                    }
+                }
+                case 4 -> {
+                    int random = rand.nextInt(sleeping_processes.size());
+                    PCB process = sleeping_processes.get(random);
+                    for(int i = 0; i < process.page_table.length; i++) {
+                        if(process.page_table[i].physical_page_number != -1)
+                        {
+                            current_process.page_table[i].physical_page_number = process.page_table[i].physical_page_number;
+                            process.page_table[i].physical_page_number = -1; //setting back to -1
+                            return process; //found a process with some space
+                        }
+                    }
+                }
+                case 5 -> {
+                    int random = rand.nextInt(waiting_processes.size());
+                    PCB process = waiting_processes.get(random);
+                    for(int i = 0; i < process.page_table.length; i++) {
+                        if(process.page_table[i].physical_page_number != -1)
+                        {
+                            current_process.page_table[i].physical_page_number = process.page_table[i].physical_page_number;
+                            process.page_table[i].physical_page_number = -1; //setting back to -1
+                            return process; //found a process with some space
+                        }
+                    }
+                }
+            }
+        }
+
+        //see if it has any physical memory
+        //if there is none then find another process
+        //if they do write the page to disk and the swap file
+        //set the victims physical page to -1 and ours to the old value
+        return null;
+    }
+
+
 }

@@ -163,10 +163,10 @@ public class Kernel extends Process implements Device {
     }
 
     private void GetMapping(int virtualPage) {
-        /*
-        int page_num = scheduler.get_current_process().page_table[virtualPage];
 
-        if(page_num == -1)
+        VirtualToPhysicalMapping page_num = scheduler.get_current_process().page_table[virtualPage];
+
+        if(page_num == null)
         {
             System.out.println("Page " + virtualPage + " not found: Seg fault"); //throw error message
             Exit(); //kill the current process
@@ -174,9 +174,8 @@ public class Kernel extends Process implements Device {
 
         int slot = (int)(Math.random() * 2); //choosing a random slot (1 or 0)
         Hardware.TLB[slot][0] = virtualPage;
-        Hardware.TLB[slot][1] = page_num;
+        Hardware.TLB[slot][1] = page_num.physical_page_number;
 
-         */
     }
 
     private int AllocateMemory(int size) {
