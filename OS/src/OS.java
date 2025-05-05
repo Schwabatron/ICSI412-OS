@@ -49,7 +49,8 @@ public class OS {
     public static void Startup(UserlandProcess init) {
         ki = new Kernel();
         //open a new swap file
-        Open("File pageFile.txt");
+        int sysfile_id = Open("File pageFile.txt");
+        Write(sysfile_id, "1024".getBytes());
         CreateProcess(init, PriorityType.interactive);
         CreateProcess(new IdleProcess(), PriorityType.background);
     }
